@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auditorium Interactive Venue Ticketing</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <header class="app-header">
+        <h1>Grand Theatre Ticketing</h1>
+        <p>Select an available seat to inspect details and add it to your cart.</p>
+    </header>
+
+    <main class="main-container">
+
+        <!-- LEFT PANEL: Interactive Map & Navigation Controls -->
+        <section class="map-section">
+            <div class="map-toolbar">
+                <div class="control-group">
+                    <button id="btn-zoom-in" title="Zoom In">+</button>
+                    <button id="btn-zoom-out" title="Zoom Out">-</button>
+                </div>
+                <div class="control-group">
+                    <button id="btn-move-up" title="Move Up">↑</button>
+                    <button id="btn-move-down" title="Move Down">↓</button>
+                    <button id="btn-move-left" title="Move Left">←</button>
+                    <button id="btn-move-right" title="Move Right">→</button>
+                </div>
+                <button id="btn-reset" class="btn-reset">Reset / Center View</button>
+            </div>
+
+            <div class="map-viewport" id="map-viewport">
+                <div class="map-canvas" id="map-canvas">
+                    <!-- Stage representation -->
+                    <div class="stage-container">
+                        <div class="stage">STAGE / SCREEN</div>
+                    </div>
+                    <!-- Venue seats generated dynamically by JavaScript -->
+                    <div class="venue-container" id="venue-container"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RIGHT PANEL: Seat Details & Cart -->
+        <aside class="sidebar">
+
+            <!-- Seat Inspection Panel -->
+            <section class="inspection-card" id="inspection-card">
+                <h2>Seat Inspection</h2>
+                <div id="inspection-details" class="inspection-details">
+                    <p class="placeholder-text">Click on any available seat to view details and price.</p>
+                </div>
+                <button id="btn-add-to-cart" class="btn-primary" disabled>ADD TO CART</button>
+            </section>
+
+            <!-- Cart Panel -->
+            <section class="cart-card">
+                <h2>Your Cart</h2>
+                <ul id="cart-list" class="cart-list">
+                    <!-- Cart items will be appended here -->
+                </ul>
+                <div class="cart-summary">
+                    <span>Total:</span>
+                    <span id="cart-total">$0.00</span>
+                </div>
+            </section>
+
+            <!-- Legend for Seat States -->
+            <section class="legend-card">
+                <h3>Legend</h3>
+                <div class="legend-grid">
+                    <div class="legend-item"><span class="seat-sample available"></span> Available</div>
+                    <div class="legend-item"><span class="seat-sample inspected"></span> Inspected</div>
+                    <div class="legend-item"><span class="seat-sample in-cart"></span> In Cart</div>
+                    <div class="legend-item"><span class="seat-sample unavailable"></span> Unavailable</div>
+                </div>
+            </section>
+
+        </aside>
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
