@@ -70,7 +70,8 @@ function renderVenue() {
                 if (isUnavailable) {
                     seatBtn.disabled = true;
                 }
-
+                // Seat Click Event listener
+                seatBtn.addEventListener("click", () => handleSeatClick(seatBtn));
                 rowDiv.appendChild(seatBtn);
             }
             zoneBlock.appendChild(rowDiv);
@@ -84,3 +85,46 @@ function renderVenue() {
 document.addEventListener("DOMContentLoaded", () => {
     renderVenue();
 });
+
+// STATE MANAGEMENT
+let currentlyInspectedSeat = null;
+
+// ADDITIONAL DOM ELEMENTS
+const inspectionDetails = document.getElementById("inspection-details");
+const btnAddToCart = document.getElementById("btn-add-to-cart");
+
+// INSPECTION LOGIC
+function handleSeatClick(seatBtn) {
+    const status = seatBtn.dataset.status;
+
+    // Do nothing if seat is unavailable or already in cart
+    if (status === 'unavailable' || status === 'in-cart') return;
+
+    // Reset previously inspected seat if any
+    if (currentlyInspectedSeat && currentlyInspectedSeat !== seatBtn) {
+        if (currentlyInspectedSeat.dataset.status === 'inspected') {
+            currentlyInspectedSeat.classList.remove('inspected');
+            currentlyInspectedSeat.classList.add('available');
+            currentlyInspectedSeat.dataset.status = 'available';
+        }
+    }
+
+    // Toggle/Set new inspected seat
+    seatBtn.classList.remove('available');
+    seatBtn.classList.add('inspected');
+    seatBtn.dataset.status = 'inspected';
+    currentlyInspectedSeat = seatBtn;
+
+    // Display inspection details
+    const seatId = seatBtn.dataset.seatId;
+    const zoneName = seatBtn.dataset.zoneName;
+    const price = seatBtn.dataset.price;
+
+    inspectionDetails.innerHTML = `
+    <p><strong>Seat:</strong> ${seatId}</p>
+    <p><strong>Section:</strong> ${zoneName}</p>
+    <p><strong>Price:</strong> $${price}</p>
+  `;
+
+    btnAddToCart.disabled = false;
+}
