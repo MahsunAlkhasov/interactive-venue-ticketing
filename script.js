@@ -222,3 +222,53 @@ document.addEventListener("DOMContentLoaded", () => {
     renderVenue();
     restoreCartState();
 });
+
+// 8. MAP PAN & ZOOM NAVIGATION
+let scale = 1;
+let translateX = 0;
+let translateY = 0;
+
+const mapCanvas = document.getElementById("map-canvas");
+const STEP = 30;
+const ZOOM_STEP = 0.15;
+
+function updateTransform() {
+    mapCanvas.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+}
+
+document.getElementById("btn-zoom-in").addEventListener("click", () => {
+    scale = Math.min(scale + ZOOM_STEP, 2.0);
+    updateTransform();
+});
+
+document.getElementById("btn-zoom-out").addEventListener("click", () => {
+    scale = Math.max(scale - ZOOM_STEP, 0.6);
+    updateTransform();
+});
+
+document.getElementById("btn-move-up").addEventListener("click", () => {
+    translateY += STEP;
+    updateTransform();
+});
+
+document.getElementById("btn-move-down").addEventListener("click", () => {
+    translateY -= STEP;
+    updateTransform();
+});
+
+document.getElementById("btn-move-left").addEventListener("click", () => {
+    translateX += STEP;
+    updateTransform();
+});
+
+document.getElementById("btn-move-right").addEventListener("click", () => {
+    translateX -= STEP;
+    updateTransform();
+});
+
+document.getElementById("btn-reset").addEventListener("click", () => {
+    scale = 1;
+    translateX = 0;
+    translateY = 0;
+    updateTransform();
+});
