@@ -272,3 +272,40 @@ document.getElementById("btn-reset").addEventListener("click", () => {
     translateY = 0;
     updateTransform();
 });
+
+// 9. BONUS: MOUSE-WHEEL ZOOM & CLICK-DRAG PANNING
+const mapViewport = document.getElementById("map-viewport");
+let isDragging = false;
+let startX = 0;
+let startY = 0;
+
+// Mouse-Wheel Zoom
+mapViewport.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    if (e.deltaY < 0) {
+        scale = Math.min(scale + 0.1, 2.0);
+    } else {
+        scale = Math.max(scale - 0.1, 0.6);
+    }
+    updateTransform();
+}, { passive: false });
+
+// Click and Drag Panning
+mapViewport.addEventListener("mousedown", (e) => {
+    isDragging = true;
+    startX = e.clientX - translateX;
+    startY = e.clientY - translateY;
+    mapViewport.style.cursor = "grabbing";
+});
+
+window.addEventListener("mousemove", (e) => {
+    if (!isDragging) return;
+    translateX = e.clientX - startX;
+    translateY = e.clientY - startY;
+    updateTransform();
+});
+
+window.addEventListener("mouseup", () => {
+    isDragging = false;
+    mapViewport.style.cursor = "default";
+});
