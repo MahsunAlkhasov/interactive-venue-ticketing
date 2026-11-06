@@ -128,3 +128,97 @@ function handleSeatClick(seatBtn) {
 
     btnAddToCart.disabled = false;
 }
+// 7. CART STATE
+let cart = JSON.parse(localStorage.getItem('venue_cart')) || [];
+
+// CART DOM ELEMENTS
+const cartList = document.getElementById("cart-list");
+const cartTotalDisplay = document.getElementById("cart-total");
+
+// ADD TO CART BUTTON CLICK HANDLER
+btnAddToCart.addEventListener("click", () => {
+    if (!currentlyInspectedSeat) return;
+
+    const seatId = currentlyInspectedSeat.dataset.seatId;
+    const zoneName = currentlyInspectedSeat.dataset.zoneName;
+    const price = parseFloat(currentlyInspectedSeat.dataset.price);
+
+    // Prevent adding duplicate seats
+    const exists = cart.some(item => item.id === seatId);
+    if (exists) return;
+
+    // Add seat object to cart state
+    cart.push({ id: seatId, zone: zoneName, price: price });
+
+    // Update map seat status to in-cart
+    currentlyInspectedSeat.classList.remove('inspected');
+    currentlyInspectedSeat.classList.add('in-cart');
+    currentlyInspectedSeat.dataset.status = 'in-cart';
+    currentlyInspectedSeat = null;
+
+    // Reset Inspection Panel
+    inspectionDetails.innerHTML = `<p class="placeholder-text">Click on any available seat to view details and price.</p>`;
+    btnAddToCart.disabled = true;
+
+    updateCartUI();
+    saveCartToStorage();
+});
+
+// REMOVE FROM CART ACTION
+function removeFromCart(seatId) {
+    cart = cart.filter(item => item.id !== seatId);
+
+    // Sync map: find matching seat button on map and restore state to available
+    const seatBtn = document.querySelector(`.seat-btn[data-seat-id="${seatId}"]`);
+    if (seatBtn) {
+        seatBtn.classList.remove('in-cart');
+        seatBtn.classList.add('available');
+        seatBtn.dataset.status = 'available';
+    }
+
+    updateCartUI();
+    saveCartToStorage();
+}
+
+// UPDATE CART UI & CALCULATE TOTAL
+function updateCartUI() {
+    cartList.innerHTML = "";
+    let total = 0;
+
+    cart.forEach(item => {
+        total += item.price;
+        const li = document.createElement("li");
+        li.className = "cart-item";
+        li.innerHTML = `
+      <span><strong>${item.id}</strong> (${item.zone}) - $${item.price}</span>
+      <button class="btn-remove" onclick="removeFromCart('${item.id}')">✕</button>
+    `;
+        cartList.appendChild(li);
+    });
+
+    cartTotalDisplay.textContent = `$${total.toFixed(2)}`;
+}
+
+// SAVE TO LOCALSTORAGE
+function saveCartToStorage() {
+    localStorage.setItem('venue_cart', JSON.stringify(cart));
+}
+
+// RESTORE MAP & CART STATE ON REFRESH
+function restoreCartState() {
+    cart.forEach(item => {
+        const seatBtn = document.querySelector(`.seat-btn[data-seat-id="${item.id}"]`);
+        if (seatBtn) {
+            seatBtn.classList.remove('available');
+            seatBtn.classList.add('in-cart');
+            seatBtn.dataset.status = 'in-cart';
+        }
+    });
+    updateCartUI();
+}
+
+// UPDATE INITIALIZATION TO RESTORE SAVED CART
+document.addEventListener("DOMContentLoaded", () => {
+    renderVenue();
+    restoreCartState();
+});
